@@ -1,7 +1,7 @@
 {
     "watch": ["src"],
     "ext": "js,json",
-    "ignore": ["src/public"],
+    "ignore": ["src/public, backend/.env"],
     "exec": "node src/server.js"
   }
   

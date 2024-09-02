@@ -1,5 +1,5 @@
 const express = require('express');
-const { sendMessage, getChatHistory } = require('../controllers/chatController');
+const { sendMessage, getChatHistory } = require('../controllers/messageController');
 const authMiddleware = require('../middleware/authMiddleware');
 const router = express.Router();
 

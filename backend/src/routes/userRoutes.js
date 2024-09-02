@@ -3,6 +3,10 @@ const { getUserProfile, updateUserProfile } = require('../controllers/userContro
 const authMiddleware = require('../middleware/authMiddleware');
 const router = express.Router();
 
+router.get('/test-protected', authMiddleware, (req, res) => {
+    res.json({ message: 'Access granted to protected route' });
+  });
+
 // @route   GET /api/user/profile
 // @desc    Get user profile
 // @access  Private

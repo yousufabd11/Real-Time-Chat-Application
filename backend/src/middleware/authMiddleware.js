@@ -1,31 +1,43 @@
 const jwt = require('jsonwebtoken');
-const User = require('../models/User');
-const dotenv = require('dotenv');
 
-//This middleware protects routes by ensuring that the user is authenticated via a valid JWT token. If the token is invalid or missing, the request is blocked:This middleware protects routes by ensuring that the user is authenticated via a valid JWT token. If the token is invalid or missing, the request is blocked:
-
-dotenv.config();
-
-const authMiddleware = async (req, res, next) => {
+// Authentication middleware function
+const authMiddleware = (req, res, next) => {
+  // Log the authorization header for debugging purposes
+  console.log(req.headers.authorization); // Debugging
+  
   let token;
 
-  if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
+  // Check if the authorization header is present and starts with 'Bearer'
+  if (
+    req.headers.authorization &&
+    req.headers.authorization.startsWith('Bearer')
+  ) {
     try {
-      // Get token from header
+      // Extract the token from the authorization header by splitting the string
       token = req.headers.authorization.split(' ')[1];
-
-      // Verify token
+      
+      // Log the extracted token for debugging purposes
+      console.log('Extracted Token:', token); // Debugging
+      
+      // Verify the token using the secret key stored in environment variables
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
-
-      // Get user from the token
-      req.user = await User.findById(decoded.id).select('-password');
-
+      
+      // Attach the decoded user information to the request object
+      // This allows the user information to be accessed in subsequent middleware or routes
+      req.user = decoded;
+      
+      // Call the next middleware function in the stack
       next();
     } catch (error) {
+      // Log any error that occurs during token verification
+      console.error(error);
+      
+      // If token verification fails, send a 401 status with an error message
       res.status(401).json({ message: 'Not authorized, token failed' });
     }
   }
 
+  // If the token is not present, send a 401 status with an error message
   if (!token) {
     res.status(401).json({ message: 'Not authorized, no token' });
   }
