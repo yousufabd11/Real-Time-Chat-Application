@@ -1,46 +1,32 @@
 const jwt = require('jsonwebtoken');
+const User = require('../models/User');
 
-// Authentication middleware function
-const authMiddleware = (req, res, next) => {
-  // Log the authorization header for debugging purposes
-  console.log(req.headers.authorization); // Debugging
-  
+// Middleware to protect routes
+const protect = async (req, res, next) => {
   let token;
 
-  // Check if the authorization header is present and starts with 'Bearer'
-  if (
-    req.headers.authorization &&
-    req.headers.authorization.startsWith('Bearer')
-  ) {
+  // Check if the token is present in the Authorization header and starts with 'Bearer'
+  if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
     try {
-      // Extract the token from the authorization header by splitting the string
+      // Extract token from the Authorization header
       token = req.headers.authorization.split(' ')[1];
-      
-      // Log the extracted token for debugging purposes
-      console.log('Extracted Token:', token); // Debugging
-      
-      // Verify the token using the secret key stored in environment variables
+
+      // Verify the token using JWT and secret key
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
-      
-      // Attach the decoded user information to the request object
-      // This allows the user information to be accessed in subsequent middleware or routes
-      req.user = decoded;
-      
-      // Call the next middleware function in the stack
+
+      // Attach user to request object based on the decoded token payload
+      req.user = await User.findById(decoded.id).select('-password');
+
+      // Proceed to the next middleware or route handler
       next();
     } catch (error) {
-      // Log any error that occurs during token verification
-      console.error(error);
-      
-      // If token verification fails, send a 401 status with an error message
+      // Handle invalid token
       res.status(401).json({ message: 'Not authorized, token failed' });
     }
-  }
-
-  // If the token is not present, send a 401 status with an error message
-  if (!token) {
+  } else {
+    // If no token is provided, respond with an error
     res.status(401).json({ message: 'Not authorized, no token' });
   }
 };
 
-module.exports = authMiddleware;
+module.exports = protect;
