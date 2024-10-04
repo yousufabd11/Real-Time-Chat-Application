@@ -6,6 +6,7 @@ const messageRoutes = require('./routes/messageRoutes');
 const userRoutes = require('./routes/userRoutes');
 const chatRoomRoutes = require('./routes/chatRoomRoutes');
 const dotenv = require('dotenv');
+const cors = require('cors');
 
 // Load environment variables
 dotenv.config();
@@ -15,6 +16,12 @@ const app = express();
 
 // Connect to MongoDB
 connectDB();
+
+// Use CORS middleware
+app.use(cors({
+    origin: 'http://localhost:5174', // Adjust this to your frontend URL
+    credentials: true,
+  }));
 
 // Middleware to parse JSON bodies
 app.use(express.json());

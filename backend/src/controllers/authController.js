@@ -33,6 +33,7 @@ const signup = async (req, res) => {
 
     // Respond with a 201 status, token, and user details
     res.status(201).json({
+      success: true,
       message: 'User registered successfully',
       token,
       user: {
@@ -72,6 +73,7 @@ const login = async (req, res) => {
 
     // Respond with a success message, token, and user details
     res.json({
+      success: true,
       message: 'Logged in successfully',
       token,
       user: {
