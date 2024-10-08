@@ -6,7 +6,7 @@ const router = express.Router();
 // @route   POST /api/message/send
 // @desc    Send a new message
 // @access  Private
-router.post('/send', authMiddleware, sendMessage);
+router.post('/send/:roomId', authMiddleware, sendMessage);
 
 // @route   GET /api/message/history/:roomId
 // @desc    Get message history for a specific room

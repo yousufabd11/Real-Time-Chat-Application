@@ -1,12 +1,13 @@
 const Message = require('../models/Message');
-const ChatRoom = require('../models/ChatRoom'); // If you need to reference chat rooms for some reason
+const ChatRoom = require('../models/ChatRoom');
 
 // Send message
 const sendMessage = async (req, res) => {
-  const { content, roomId } = req.body;
+  const { content } = req.body;
+  const { roomId } = req.params; // Get roomId from URL parameter
 
   try {
-    // Find the chat room
+    // Find the chat room by roomId
     const chatRoom = await ChatRoom.findById(roomId);
     if (!chatRoom) {
       return res.status(404).json({ message: 'Chat room not found' });
@@ -16,10 +17,13 @@ const sendMessage = async (req, res) => {
     const message = new Message({
       content,
       sender: req.user.id,
-      room: roomId, // Ensure your Message schema has a 'room' field
+      room: roomId
     });
 
     await message.save();
+
+    // Populate sender name
+    await message.populate('sender', 'name');
 
     // Add message to chat room
     chatRoom.messages.push(message._id);
@@ -36,16 +40,27 @@ const getMessageHistory = async (req, res) => {
   const { roomId } = req.params;
 
   try {
-    const chatRoom = await ChatRoom.findById(roomId).populate('messages');
+    // Find the chat room and populate messages with sender name
+    const chatRoom = await ChatRoom.findById(roomId).populate({
+      path: 'messages',
+      populate: { path: 'sender', select: 'name' }
+    }).exec();
+
     if (!chatRoom) {
+      console.log('Chat room not found');
       return res.status(404).json({ message: 'Chat room not found' });
     }
 
+    // Return messages from the populated chatRoom
     res.json(chatRoom.messages);
   } catch (error) {
+    console.error('Error fetching message history:', error);  // Detailed error log
     res.status(500).json({ message: 'Server error', error: error.message });
   }
 };
+
+
+
 
 // Update message status
 const updateMessageStatus = async (req, res) => {
@@ -65,6 +80,5 @@ const updateMessageStatus = async (req, res) => {
     res.status(500).json({ message: 'Server error', error: error.message });
   }
 };
-
 
 module.exports = { sendMessage, getMessageHistory, updateMessageStatus };

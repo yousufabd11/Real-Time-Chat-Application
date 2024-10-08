@@ -38,57 +38,99 @@ const createChatRoom = async (req, res) => {
   }
 };
 
-// Join a chat room
+
+// Join Chat Room 
 const joinChatRoom = async (req, res) => {
-  const { roomId } = req.body;
+  const { roomId } = req.body; // Extract roomId from the request body
 
   try {
+    // Find the chat room by ID
     const chatRoom = await ChatRoom.findById(roomId);
     if (!chatRoom) {
       return res.status(404).json({ message: 'Chat room not found' });
     }
 
-    if (!chatRoom.participants.includes(req.user.id)) {
-      chatRoom.participants.push(req.user.id);
-      await chatRoom.save();
+    // Check if the user is already a participant
+    if (chatRoom.participants.includes(req.user.id)) {
+      return res.status(400).json({ message: 'User is already in the chat room' });
     }
 
-    res.json({ message: 'Joined chat room successfully', chatRoom });
-  } catch (error) {
-    res.status(500).json({ message: 'Server error', error: error.message });
-  }
-};
-
-// Leave a chat room
-const leaveChatRoom = async (req, res) => {
-  const { roomId } = req.body;
-
-  try {
-    const chatRoom = await ChatRoom.findById(roomId);
-    if (!chatRoom) {
-      return res.status(404).json({ message: 'Chat room not found' });
-    }
-
-    chatRoom.participants = chatRoom.participants.filter(userId => userId.toString() !== req.user.id);
+    // Add user to the participants list
+    chatRoom.participants.push(req.user.id);
     await chatRoom.save();
 
-    res.json({ message: 'Left chat room successfully', chatRoom });
+    // Emit an event to update the room participants (if you are using Socket.IO)
+    io.to(roomId).emit('roomUpdated', { roomId, updatedRoom: chatRoom });
+
+    // Send success response
+    res.status(200).json({ message: 'Successfully joined the chat room', chatRoom });
   } catch (error) {
+    // Log the error for debugging purposes
+    console.error('Error joining chat room:', error);
     res.status(500).json({ message: 'Server error', error: error.message });
   }
 };
+
+
+//leave chat room 
+const leaveChatRoom = async (req, res) => {
+  const { roomId } = req.params;
+
+  try {
+    const chatRoom = await ChatRoom.findById(roomId);
+    if (!chatRoom) return res.status(404).json({ message: 'Chat room not found' });
+
+    // Ensure req.user.id is valid
+    if (!req.user || !req.user.id) {
+      return res.status(400).json({ message: 'User ID is missing' });
+    }
+
+    // Remove the user from participants
+    chatRoom.participants = chatRoom.participants.filter(
+      userId => userId.toString() !== req.user.id
+    );
+
+    await chatRoom.save();
+
+    // Emit an update event after leaving
+    io.to(roomId).emit('roomUpdated', { roomId, updatedRoom: chatRoom });
+
+    res.status(200).json({ message: 'Left chat room successfully' });
+  } catch (error) {
+    console.error('Error leaving chat room:', error); // Log detailed error
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+};
+
+
+
+
 
 // Get a list of chat rooms for the authenticated user
 const getChatRooms = async (req, res) => {
   try {
-    // Find chat rooms that include the current user as a participant
-    const chatRooms = await ChatRoom.find({ participants: req.user.id }).populate('participants', 'name email');
-    
-    // Return the list of chat rooms
-    res.json(chatRooms);
+    // Fetch all chat rooms and populate participants
+    const chatRooms = await ChatRoom.find().populate('participants', 'name email');
+
+    // Find the current user's ID
+    const userId = req.user.id;
+
+    // Filter user rooms
+    const userRooms = chatRooms.filter(room => 
+      room.participants.some(participant => participant._id.toString() === userId)
+    );
+
+    // Filter available rooms (those not including the user)
+    const availableRooms = chatRooms.filter(room => 
+      !room.participants.some(participant => participant._id.toString() === userId)
+    );
+
+    // Return both userRooms and availableRooms
+    res.json({ userRooms, availableRooms });
   } catch (error) {
     res.status(500).json({ message: 'Server error', error: error.message });
   }
 };
+
 
 module.exports = { createChatRoom, joinChatRoom, leaveChatRoom, getChatRooms };
