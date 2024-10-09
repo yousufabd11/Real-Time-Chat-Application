@@ -19,7 +19,7 @@ connectDB();
 
 // Use CORS middleware
 app.use(cors({
-    origin: 'http://localhost:5173', // Adjust this to your frontend URL
+    origin: 'https://buble-chat-livid.vercel.app/', // Adjust this to your frontend URL
     credentials: true,
   }));
 
