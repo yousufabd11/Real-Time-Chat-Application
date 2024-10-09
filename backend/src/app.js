@@ -27,6 +27,11 @@ app.use(cors({
 // Middleware to parse JSON bodies
 app.use(express.json());
 
+// Example API route
+app.get('/', (req, res) => {
+  res.send('Hello from the backend!');
+});
+
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/message', messageRoutes);
