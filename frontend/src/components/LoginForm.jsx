@@ -12,7 +12,7 @@ const LoginForm = () => {
     e.preventDefault();
     try {
       // Call backend API for login
-      const response = await axios.post("https://backend-app-uzxj.vercel.app/login", { email, password });
+      const response = await axios.post("http://localhost:5000/api/auth/login", { email, password });
       console.log(response.data); // Check the response structure
 
       // Check for the token in the response
