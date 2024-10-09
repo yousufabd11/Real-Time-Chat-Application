@@ -21,6 +21,7 @@ connectDB();
 app.use(cors({
     origin: 'https://buble-chat-livid.vercel.app/', // Adjust this to your frontend URL
     credentials: true,
+    methods: ["GET", "POST"],
   }));
 
 // Middleware to parse JSON bodies
