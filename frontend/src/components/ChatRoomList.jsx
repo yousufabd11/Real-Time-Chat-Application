@@ -64,7 +64,7 @@ const ChatRoomList = ({ user }) => {
         socket.emit('leaveRoom', roomId, userId);
 
         // Make an API call to leave the chat room in the database (if needed)
-        const response = await axios.post(`http://localhost:5000/api/chatroom/leave/${roomId}`, {}, {
+        const response = await axios.post(`VITE_API_BASE_URL/api/chatroom/leave/${roomId}`, {}, {
             headers: {
                 Authorization: `Bearer ${token}`,
             },

@@ -4,7 +4,7 @@ import io from 'socket.io-client';
 import MessageForm from './MessageForm';
 import axios from 'axios';
 
-const socket = io('http://localhost:5000'); // Replace with your backend URL
+const socket = io('VITE_API_BASE_URL'); // Replace with your backend URL
 
 const ChatRoom = () => {
   const { id: roomId } = useParams(); // Extract roomId from URL
@@ -18,7 +18,7 @@ const ChatRoom = () => {
     // Fetch logged-in user data
     const fetchUserData = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/api/user/me', {
+        const response = await axios.get('VITE_API_BASE_URL/api/user/me', {
           headers: { Authorization: `Bearer ${token}` },
         });
         setLoggedInUserId(response.data.id);
@@ -35,7 +35,7 @@ const ChatRoom = () => {
     // Fetch message history
     const fetchMessages = async () => {
       try {
-        const response = await axios.get(`http://localhost:5000/api/message/history/${roomId}`, {
+        const response = await axios.get(`VITE_API_BASE_URL/api/message/history/${roomId}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         setMessages(response.data); // Set messages array from response data directly
@@ -60,7 +60,7 @@ const ChatRoom = () => {
     const token = localStorage.getItem('token');
   
     try {
-      const response = await axios.post(`http://localhost:5000/api/message/send/${roomId}`, 
+      const response = await axios.post(`VITE_API_BASE_URL/api/message/send/${roomId}`, 
         { content },
         { headers: { Authorization: `Bearer ${token}` } }
       );

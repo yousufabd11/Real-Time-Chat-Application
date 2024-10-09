@@ -18,13 +18,13 @@ const ChatDashboard = () => {
 
       try {
         // Fetch user data
-        const userResponse = await axios.get('http://localhost:5000/api/user/profile', {
+        const userResponse = await axios.get('VITE_API_BASE_URL/api/user/profile', {
           headers: { Authorization: `Bearer ${token}` },
         });
         setUser(userResponse.data); // Store user data
 
         // Fetch chat rooms
-        const roomsResponse = await axios.get('http://localhost:5000/api/chatroom', {
+        const roomsResponse = await axios.get('VITE_API_BASE_URL/api/chatroom', {
           headers: { Authorization: `Bearer ${token}` },
         });
         setRooms(roomsResponse.data.rooms); // Store chat rooms

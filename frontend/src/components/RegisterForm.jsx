@@ -12,7 +12,7 @@ const RegisterForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post("http://localhost:5000/api/auth/signup", { name, email, password });
+      const response = await axios.post("VITE_API_BASE_URL/api/auth/signup", { name, email, password });
       console.log(response.data); // Log the response to check its structure
       if (response.data.success) {
         navigate("/login");
