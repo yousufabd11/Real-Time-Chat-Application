@@ -18,13 +18,13 @@ const ChatDashboard = () => {
 
       try {
         // Fetch user data
-        const userResponse = await axios.get('https://real-time-chat-application-ys7u.onrender.com//api/user/profile', {
+        const userResponse = await axios.get('https://real-time-chat-application-ys7u.onrender.com/api/user/profile', {
           headers: { Authorization: `Bearer ${token}` },
         });
         setUser(userResponse.data); // Store user data
 
         // Fetch chat rooms
-        const roomsResponse = await axios.get('https://real-time-chat-application-ys7u.onrender.com//api/chatroom', {
+        const roomsResponse = await axios.get('https://real-time-chat-application-ys7u.onrender.com/api/chatroom', {
           headers: { Authorization: `Bearer ${token}` },
         });
         setRooms(roomsResponse.data.rooms); // Store chat rooms

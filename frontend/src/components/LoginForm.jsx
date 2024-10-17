@@ -12,7 +12,7 @@ const LoginForm = () => {
     e.preventDefault();
     try {
       // Call backend API for login
-      const response = await axios.post("https://real-time-chat-application-ys7u.onrender.com//api/auth/login", { email, password });
+      const response = await axios.post("https://real-time-chat-application-ys7u.onrender.com/api/auth/login", { email, password });
       console.log(response.data); // Check the response structure
 
       // Check for the token in the response

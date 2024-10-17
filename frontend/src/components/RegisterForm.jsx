@@ -12,7 +12,7 @@ const RegisterForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post("https://real-time-chat-application-ys7u.onrender.com//api/auth/signup", { name, email, password });
+      const response = await axios.post("https://real-time-chat-application-ys7u.onrender.com/api/auth/signup", { name, email, password });
       console.log(response.data); // Log the response to check its structure
       if (response.data.success) {
         navigate("/login");

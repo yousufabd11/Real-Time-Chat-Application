@@ -18,7 +18,7 @@ const ChatRoom = () => {
     // Fetch logged-in user data
     const fetchUserData = async () => {
       try {
-        const response = await axios.get('https://real-time-chat-application-ys7u.onrender.com//api/user/me', {
+        const response = await axios.get('https://real-time-chat-application-ys7u.onrender.com/api/user/me', {
           headers: { Authorization: `Bearer ${token}` },
         });
         setLoggedInUserId(response.data.id);
@@ -35,7 +35,7 @@ const ChatRoom = () => {
     // Fetch message history
     const fetchMessages = async () => {
       try {
-        const response = await axios.get(`https://real-time-chat-application-ys7u.onrender.com//api/message/history/${roomId}`, {
+        const response = await axios.get(`https://real-time-chat-application-ys7u.onrender.com/api/message/history/${roomId}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         setMessages(response.data); // Set messages array from response data directly
@@ -60,7 +60,7 @@ const ChatRoom = () => {
     const token = localStorage.getItem('token');
   
     try {
-      const response = await axios.post(`https://real-time-chat-application-ys7u.onrender.com//api/message/send/${roomId}`, 
+      const response = await axios.post(`https://real-time-chat-application-ys7u.onrender.com/api/message/send/${roomId}`, 
         { content },
         { headers: { Authorization: `Bearer ${token}` } }
       );
