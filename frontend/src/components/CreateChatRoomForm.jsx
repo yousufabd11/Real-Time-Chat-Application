@@ -21,7 +21,7 @@ const CreateChatRoomForm = ({ onAddRoom }) => {
 
       // Send a POST request to create a new chat room with the token in headers
       const response = await axios.post(
-        'https://real-time-chat-application-ys7u.onrender.com/api/chatroom/create',
+        'VITE_REACT_APP_BACKEND_BASEURL/api/chatroom/create',
         { name: roomName },
         { headers: { Authorization: `Bearer ${token}` } } // Include token in headers
       );

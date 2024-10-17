@@ -64,7 +64,7 @@ const ChatRoomList = ({ user }) => {
         socket.emit('leaveRoom', roomId, userId);
 
         // Make an API call to leave the chat room in the database (if needed)
-        const response = await axios.post(`https://real-time-chat-application-ys7u.onrender.com/api/chatroom/leave/${roomId}`, {}, {
+        const response = await axios.post(`VITE_REACT_APP_BACKEND_BASEURL/api/chatroom/leave/${roomId}`, {}, {
             headers: {
                 Authorization: `Bearer ${token}`,
             },
